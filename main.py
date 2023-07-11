@@ -101,7 +101,7 @@ def single_post_process(df, n, values, locs):
     values.iloc[n, locs['mean']] = np.mean(returns)
     values.iloc[n, locs['var']] = np.var(returns)
     values.iloc[n, locs['kurtosis']] = sc.stats.kurtosis(returns)
-    values.iloc[n, locs['srange']] = sc.stats.studentized_range(returns)[0]
+    values.iloc[n, locs['srange']] = (max(returns) - min(returns)) / np.std(returns)
 
     autocorr1, autocorr2, autocorr3, abs_power, sq_power = get_autocorr(returns)
     values.iloc[n, locs['abs_ac_plaw']] = abs_power
