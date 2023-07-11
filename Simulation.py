@@ -14,8 +14,8 @@ class Simulation:
         self.start_price = 100
         self.start_wealth = 1000
         self.annual = 250
-        self.n_fundamentalists = 1
-        self.n_chartists = 1
+        self.n_fundamentalists = 100
+        self.n_chartists = 100
 
         self.risk_free_rate = 0.05
         self.risk_free_return = 1 + (self.risk_free_rate / self.annual)
