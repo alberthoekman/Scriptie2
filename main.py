@@ -4,13 +4,9 @@ from Simulation import Simulation
 import os
 import pickle
 import pandas as pd
-import statsmodels.tsa.stattools as sm
 import matplotlib.pyplot as plt
 import numpy as np
-from arch import arch_model
 import scipy as sc
-from statsmodels.tsa.arima.model import ARIMA
-from statsmodels.stats.diagnostic import acorr_ljungbox
 
 def get_power(y):
     x = np.arange(1, len(y) + 1)
@@ -30,6 +26,7 @@ def init_df(n):
         "r_plaw1": pd.Series(dtype="float"),
         "r_plaw2": pd.Series(dtype="float"),
         "abs_ac_plaw": pd.Series(dtype="float"),
+        "abs_sq_plaw": pd.Series(dtype="float"),
         "GARCH": pd.Series(dtype="float"),
         "ARCH": pd.Series(dtype="float"),
         "LM": pd.Series(dtype="float"),
@@ -103,7 +100,7 @@ def single_post_process(df, n, values, locs):
 
     values.iloc[n, locs['mean']] = np.mean(returns)
     values.iloc[n, locs['var']] = np.var(returns)
-    values.iloc[n, locs['kurtosis']] = np.kurtosis(returns)
+    values.iloc[n, locs['kurtosis']] = sc.stats.kurtosis(returns)
     values.iloc[n, locs['srange']] = sc.stats.studentized_range(returns)[0]
 
     autocorr1, autocorr2, autocorr3, abs_power, sq_power = get_autocorr(returns)
