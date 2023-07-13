@@ -1,6 +1,5 @@
 from Investor import Investor
 
-
 class Chartist(Investor):
     def __init__(self, sim, rate, aversion, reaction):
         super().__init__(sim, rate, aversion)
@@ -13,23 +12,15 @@ class Chartist(Investor):
         return price / vol
 
     def estimate_price(self, current, sample_mean):
-        rfr = self.sim.risk_free_return
-        mean = self.sim.fundamental_mean
-
         one = self.rate * (current - sample_mean)
-        two = rfr - 1
-        three = current - mean
 
-        return one - (two * three)
+        return current + one
 
     def estimate_vol(self, sample_var):
-        one = sample_var * self.reaction
-        two = 1 + (self.sim.risk_free_rate ** 2) + one
+        one = self.reaction * sample_var
+        var = self.sim.fundamental_variance
 
-        averse = self.aversion
-        vol = self.sim.fundamental_variance
-
-        return averse * vol * two
+        return self.aversion * (var + one)
         
 
 

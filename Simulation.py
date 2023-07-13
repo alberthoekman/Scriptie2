@@ -12,18 +12,15 @@ class Simulation:
         self.rng = default_rng()
         self.t_max = 6000
         self.start_price = 100
-        self.start_wealth = 1000
         self.annual = 250
-        self.n_fundamentalists = 100
-        self.n_chartists = 100
+        self.n_fundamentalists = 1000
+        self.n_chartists = 1000
 
         self.risk_free_rate = 0.05
         self.risk_free_return = 1 + (self.risk_free_rate / self.annual)
         self.volatility = 0.2
         self.fundamental_mean = 100
         self.fundamental_variance = ((self.volatility * self.fundamental_mean) ** 2) / self.annual
-        self.dividend_mean = self.fundamental_mean * (self.risk_free_return - 1)
-        self.dividend_variance = (self.risk_free_rate ** 2) * self.fundamental_variance
         self.error_variance = 0.01265
         self.decay_rate = 0.85
         # self.noise_demand_variance = 1 * ((self.n_fundamentalists + self.n_chartists) / 2)
@@ -43,6 +40,9 @@ class Simulation:
         self.locs = self.init_locs()
         self.populate_agents()
 
+        # self.dividend_mean = self.fundamental_mean * (self.risk_free_return - 1)
+        # self.dividend_variance = (self.risk_free_rate ** 2) * self.fundamental_variance
+
     def reset(self):
         self.df = self.init_df()
 
@@ -61,6 +61,7 @@ class Simulation:
                 c_demand += chartist.calculate_demand(sample_mean, sample_var, current)
 
             for fundamentalist in self.fundamentalists:
+                # est_fundamental = self.market.calculate_next_fundamental(fundamental)
                 f_demand += fundamentalist.calculate_demand(current, fundamental)
 
             self.df.iloc[t, self.locs["f_demand"]] = f_demand
@@ -68,17 +69,15 @@ class Simulation:
 
             if t != self.t_max-1:
                 new = self.market.calculate_new_price(current, f_demand, c_demand)
-                returns = 100 * ((new - current) / current)
+                returns = np.log(new) - np.log(current)
                 current = new
                 fundamental = self.market.calculate_next_fundamental(fundamental)
-                dividend = self.market.calculate_next_dividend()
                 sample_var = self.market.calculate_next_sample_variance(sample_var, sample_mean, current)
                 sample_mean = self.market.calculate_next_sample_mean(sample_mean, current)
 
                 self.df.iloc[t+1, self.locs["price"]] = current
                 self.df.iloc[t+1, self.locs["return"]] = returns
                 self.df.iloc[t+1, self.locs["fundamental"]] = fundamental
-                self.df.iloc[t+1, self.locs["dividend"]] = dividend
                 self.df.iloc[t+1, self.locs["mean"]] = sample_mean
                 self.df.iloc[t+1, self.locs["var"]] = sample_var
 
@@ -110,7 +109,6 @@ class Simulation:
             "return": pd.Series(dtype="float"),
             "f_demand": pd.Series(dtype="float"),
             "c_demand": pd.Series(dtype="float"),
-            "dividend": pd.Series(dtype="float"),
             "mean": pd.Series(dtype="float"),
             "var": pd.Series(dtype="float"),
             "fundamental": pd.Series(dtype="float"),
@@ -121,10 +119,9 @@ class Simulation:
         df.iloc[0, 2] = 0
         df.iloc[0, 3] = 0
         df.iloc[0, 4] = 0
-        df.iloc[0, 5] = 0
-        df.iloc[0, 6] = self.start_price
-        df.iloc[0, 7] = self.fundamental_variance
-        df.iloc[0, 8] = self.fundamental_mean
+        df.iloc[0, 5] = self.start_price
+        df.iloc[0, 6] = self.fundamental_variance
+        df.iloc[0, 7] = self.fundamental_mean
 
         return df
 
@@ -135,10 +132,9 @@ class Simulation:
             "return": 2,
             "f_demand": 3,
             "c_demand": 4,
-            "dividend": 5,
-            "mean": 6,
-            "var": 7,
-            "fundamental": 8,
+            "mean": 5,
+            "var": 6,
+            "fundamental": 7,
         }
 
 

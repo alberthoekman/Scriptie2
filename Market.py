@@ -8,13 +8,10 @@ class Market:
 
         return current * (1 + (var * noise))
 
-    def calculate_gain(self, prev, current, div):
+    def calculate_gain(self, prev, current):
         r = self.sim.risk_free_return
 
-        return current + div - (r * prev)
-
-    def calculate_next_dividend(self):
-        return self.sim.rng.normal(self.sim.dividend_mean, self.sim.dividend_variance)
+        return current - (r * prev)
 
     def calculate_next_sample_mean(self, prev_mean, current):
         delta = self.sim.decay_rate
@@ -29,7 +26,7 @@ class Market:
     def calculate_new_price(self, current, f_demand, c_demand):
         net_demand = f_demand + c_demand
         rate = self.sim.market_rate
-        noise = self.sim.rng.normal(0, self.sim.noise_demand_variance)
+        noise = self.sim.rng.normal(0, self.sim.noise_demand_variance**2)
 
-        return current + ((rate/2) * net_demand) + noise
+        return current + (rate * net_demand) + noise
 

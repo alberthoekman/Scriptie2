@@ -8,20 +8,14 @@ class Fundamentalist(Investor):
         return price / vol
 
     def estimate_price(self, current, fundamental):
-        rfr = self.sim.risk_free_return
-        mean = self.sim.fundamental_mean
-
         one = self.rate * (fundamental - current)
-        two = rfr - 1
-        three = current - mean
 
-        return one - (two * three)
+        return current + one
 
     def estimate_vol(self):
-        one = 1 + (self.sim.risk_free_rate ** 2)
         vol = self.sim.fundamental_variance
 
-        return self.aversion * one * vol
+        return self.aversion * vol
 
     # def calculate_demand(self, current, fundamental):
     #     price = self.estimate_price(current, fundamental)
