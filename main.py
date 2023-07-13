@@ -78,7 +78,7 @@ def get_autocorr(returns):
 def get_figarch(returns, n, values, locs):
     model = arch.univariate.ARX(returns, lags=1, rescale=False)
     model.volatility = arch.univariate.volatility.FIGARCH(p=1, q=1)
-    res = model.fit()
+    res = model.fit(disp=False)
     values.iloc[n, locs['GARCH']] = res.params['omega']
     values.iloc[n, locs['ARCH']] = res.params['phi']
     values.iloc[n, locs['LM']] = res.params['d']
@@ -213,7 +213,7 @@ if __name__ == '__main__':
             sim.run()
         except (OverflowError, FloatingPointError):
             print(str(i) + '\n')
-            print(sim.df['f_demand'].to_string(index=False))
+            print(sim.df['price'].to_string(index=False))
         autocorr1, autocorr2, autocorr3, values = single_post_process(sim.df, i, values_df, locs)
         returns[i, :] = autocorr1
         abs_returns[i, :] = autocorr2

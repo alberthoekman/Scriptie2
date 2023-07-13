@@ -48,7 +48,7 @@ class Simulation:
         self.df = self.init_df()
 
     def run(self):
-        np.seterr(all='raise')
+        # np.seterr(all='raise')
         current = self.df.iloc[0, self.locs["price"]]
         fundamental = self.df.iloc[0, self.locs["fundamental"]]
         sample_mean = self.df.iloc[0, self.locs["mean"]]
