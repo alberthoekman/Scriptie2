@@ -6,6 +6,11 @@ class Investor(metaclass=ABCMeta):
         self.sim = simulation
         self.aversion = aversion
 
+    def calculate_gain(self, expected, current):
+        r = self.sim.risk_free_return
+
+        return expected - (r * current)
+
     # def calculate_wealth(self, gain):
     #     r = self.sim.risk_free_return
     #
