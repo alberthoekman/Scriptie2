@@ -1,5 +1,6 @@
 from Investor import Investor
 
+
 class Chartist(Investor):
     def __init__(self, sim, rate, aversion, reaction):
         super().__init__(sim, rate, aversion)
@@ -7,9 +8,10 @@ class Chartist(Investor):
 
     def calculate_demand(self, sample_mean, sample_var, current):
         price = self.estimate_price(current, sample_mean)
+        gain = self.calculate_gain(price, current)
         vol = self.estimate_vol(sample_var)
 
-        return price / vol
+        return gain / vol
 
     def estimate_price(self, current, sample_mean):
         one = self.rate * (current - sample_mean)

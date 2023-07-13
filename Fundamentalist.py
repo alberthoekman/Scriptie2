@@ -3,9 +3,10 @@ from Investor import Investor
 class Fundamentalist(Investor):
     def calculate_demand(self, current, fundamental):
         price = self.estimate_price(current, fundamental)
+        gain = self.calculate_gain(price, current)
         vol = self.estimate_vol()
 
-        return price / vol
+        return gain / vol
 
     def estimate_price(self, current, fundamental):
         one = self.rate * (fundamental - current)
