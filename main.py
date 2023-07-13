@@ -209,7 +209,11 @@ if __name__ == '__main__':
 
     for i in range(0, n):
         sim.reset()
-        sim.run()
+        try:
+            sim.run()
+        except OverflowError:
+            print(str(i) + '\n')
+            print(sim.df['price'].to_string(index=False))
         autocorr1, autocorr2, autocorr3, values = single_post_process(sim.df, i, values_df, locs)
         returns[i, :] = autocorr1
         abs_returns[i, :] = autocorr2
