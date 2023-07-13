@@ -211,7 +211,7 @@ if __name__ == '__main__':
         sim.reset()
         try:
             sim.run()
-        except OverflowError:
+        except (OverflowError, FloatingPointError):
             print(str(i) + '\n')
             print(sim.df['price'].to_string(index=False))
         autocorr1, autocorr2, autocorr3, values = single_post_process(sim.df, i, values_df, locs)
