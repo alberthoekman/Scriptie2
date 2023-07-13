@@ -141,21 +141,27 @@ def get_plaws(data):
     x2 = x[indexes2]
     y2 = y[indexes2]
 
-    plaw1 = sc.optimize.curve_fit(
-        powerlaw,
-        xdata=x1,
-        ydata=y1,
-        p0=[-0.3, 2],
-        maxfev=10000
-    )
+    if len(y1) > 0:
+        plaw1 = sc.optimize.curve_fit(
+            powerlaw,
+            xdata=x1,
+            ydata=y1,
+            p0=[-0.3, 2],
+            maxfev=10000
+        )[0][0]
+    else:
+        plaw1 = 0
 
-    plaw2 = sc.optimize.curve_fit(
-        powerlaw,
-        xdata=x2,
-        ydata=y2,
-        p0=[-0.3, 2],
-        maxfev=10000
-    )
+    if len(y2) > 0:
+        plaw2 = sc.optimize.curve_fit(
+            powerlaw,
+            xdata=x2,
+            ydata=y2,
+            p0=[-0.3, 2],
+            maxfev=10000
+        )[0][0]
+    else:
+        plaw2 = 0
 
     # xxs1 = [powerlaw(xx, plaw1[0][0], plaw1[0][1]) for xx in x1]
     # xxs2 = [powerlaw(xx, plaw2[0][0], plaw2[0][1]) for xx in x2]
@@ -172,7 +178,7 @@ def get_plaws(data):
     # print(str(plaw1))
     # print(str(plaw2))
 
-    return -plaw1[0][0], -plaw2[0][0]
+    return -plaw1, -plaw2
 
 def plot():
     autocorr1 = pickle.load(open("autocorr1.p", "rb"))

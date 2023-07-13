@@ -27,6 +27,10 @@ class Market:
         net_demand = f_demand + c_demand
         rate = self.sim.market_rate
         noise = self.sim.rng.normal(0, self.sim.noise_demand_variance**2)
+        new = current + (rate * net_demand) + noise
 
-        return current + (rate * net_demand) + noise
+        if new <= 0:
+            new = 0.01
+            
+        return new
 
