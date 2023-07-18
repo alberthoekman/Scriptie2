@@ -31,6 +31,6 @@ class Market:
 
         if new <= 0:
             new = 0.01
-            
+
         return new
 

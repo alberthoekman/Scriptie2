@@ -26,11 +26,40 @@ def init_df(n):
         "r_plaw1": pd.Series(dtype="float"),
         "r_plaw2": pd.Series(dtype="float"),
         "abs_ac_plaw": pd.Series(dtype="float"),
-        "abs_sq_plaw": pd.Series(dtype="float"),
-        "GARCH": pd.Series(dtype="float"),
-        "ARCH": pd.Series(dtype="float"),
-        "LM": pd.Series(dtype="float"),
-        "FIGARCH": pd.Series(dtype="float"),
+        "sq_ac_plaw": pd.Series(dtype="float"),
+        "garch_a": pd.Series(dtype="float"),
+        "garch_b": pd.Series(dtype="float"),
+        "garch_alpha_0": pd.Series(dtype="float"),
+        "garch_alpha_1": pd.Series(dtype="float"),
+        "garch_beta": pd.Series(dtype="float"),
+        "garch_a_std": pd.Series(dtype="float"),
+        "garch_b_std": pd.Series(dtype="float"),
+        "garch_alpha_0_std": pd.Series(dtype="float"),
+        "garch_alpha_1_std": pd.Series(dtype="float"),
+        "garch_beta_std": pd.Series(dtype="float"),
+        "garch_a_sig": pd.Series(),
+        "garch_b_sig": pd.Series(),
+        "garch_alpha_0_sig": pd.Series(),
+        "garch_alpha_1_sig": pd.Series(),
+        "garch_beta_sig": pd.Series(),
+        "fi_a": pd.Series(dtype="float"),
+        "fi_b": pd.Series(dtype="float"),
+        "fi_alpha_0": pd.Series(dtype="float"),
+        "fi_phi": pd.Series(dtype="float"),
+        "fi_d": pd.Series(dtype="float"),
+        "fi_beta": pd.Series(dtype="float"),
+        "fi_a_std": pd.Series(dtype="float"),
+        "fi_b_std": pd.Series(dtype="float"),
+        "fi_alpha_0_std": pd.Series(dtype="float"),
+        "fi_phi_std": pd.Series(dtype="float"),
+        "fi_d_std": pd.Series(dtype="float"),
+        "fi_beta_std": pd.Series(dtype="float"),
+        "fi_a_sig": pd.Series(),
+        "fi_b_sig": pd.Series(),
+        "fi_alpha_0_sig": pd.Series(),
+        "fi_phi_sig": pd.Series(),
+        "fi_d_sig": pd.Series(),
+        "fi_beta_sig": pd.Series(),
     }, index=range(n))
 
 def init_locs():
@@ -43,10 +72,39 @@ def init_locs():
         "r_plaw2": 5,
         "abs_ac_plaw": 6,
         "sq_ac_plaw": 7,
-        "GARCH": 8,
-        "ARCH": 9,
-        "LM": 10,
-        "FIGARCH": 11,
+        "garch_a": 8,
+        "garch_b": 9,
+        "garch_alpha_0": 10,
+        "garch_alpha_1": 11,
+        "garch_beta": 12,
+        "garch_a_std": 13,
+        "garch_b_std": 14,
+        "garch_alpha_0_std": 15,
+        "garch_alpha_1_std": 16,
+        "garch_beta_std": 17,
+        "garch_a_sig": 18,
+        "garch_b_sig": 19,
+        "garch_alpha_0_sig": 20,
+        "garch_alpha_1_sig": 21,
+        "garch_beta_sig": 22,
+        "fi_a": 23,
+        "fi_b": 24,
+        "fi_alpha_0": 25,
+        "fi_phi": 26,
+        "fi_d": 27,
+        "fi_beta": 28,
+        "fi_a_std": 29,
+        "fi_b_std": 30,
+        "fi_alpha_0_std": 31,
+        "fi_phi_std": 32,
+        "fi_d_std": 33,
+        "fi_beta_std": 34,
+        "fi_a_sig": 35,
+        "fi_b_sig": 36,
+        "fi_alpha_0_sig": 37,
+        "fi_phi_sig": 38,
+        "fi_d_sig": 39,
+        "fi_beta_sig": 40,
     }
 
 def get_autocorr(returns):
@@ -77,12 +135,50 @@ def get_autocorr(returns):
 
 def get_figarch(returns, n, values, locs):
     model = arch.univariate.ARX(returns, lags=1, rescale=False)
+    model.volatility = arch.univariate.volatility.GARCH(p=1, q=1)
+    res = model.fit(disp=False)
+
+    values.iloc[n, locs['garch_a']] = res.params['omega']
+    values.iloc[n, locs['garch_b']] = res.params['y[1]']
+    values.iloc[n, locs['garch_alpha_0']] = res.params['Const']
+    values.iloc[n, locs['garch_alpha_1']] = res.params['alpha[1]']
+    values.iloc[n, locs['garch_beta']] = res.params['beta[1]']
+
+    values.iloc[n, locs['garch_a_std']] = res.std_err['omega']
+    values.iloc[n, locs['garch_b_std']] = res.std_err['y[1]']
+    values.iloc[n, locs['garch_alpha_0_std']] = res.std_err['Const']
+    values.iloc[n, locs['garch_alpha_1_std']] = res.std_err['alpha[1]']
+    values.iloc[n, locs['garch_beta_std']] = res.std_err['beta[1]']
+
+    values.iloc[n, locs['garch_a_sig']] = res.params['omega'] >= 0.05
+    values.iloc[n, locs['garch_b_sig']] = res.params['y[1]'] >= 0.05
+    values.iloc[n, locs['garch_alpha_0_sig']] = res.params['Const'] >= 0.05
+    values.iloc[n, locs['garch_alpha_1_sig']] = res.params['alpha[1]'] >= 0.05
+    values.iloc[n, locs['garch_beta_sig']] = res.params['beta[1]'] >= 0.05
+
     model.volatility = arch.univariate.volatility.FIGARCH(p=1, q=1)
     res = model.fit(disp=False)
-    values.iloc[n, locs['GARCH']] = res.params['omega']
-    values.iloc[n, locs['ARCH']] = res.params['phi']
-    values.iloc[n, locs['LM']] = res.params['d']
-    values.iloc[n, locs['FIGARCH']] = res.params['beta']
+
+    values.iloc[n, locs['fi_a']] = res.params['omega']
+    values.iloc[n, locs['fi_b']] = res.params['y[1]']
+    values.iloc[n, locs['fi_alpha_0']] = res.params['Const']
+    values.iloc[n, locs['fi_phi']] = res.params['phi']
+    values.iloc[n, locs['fi_d']] = res.params['d']
+    values.iloc[n, locs['fi_beta']] = res.params['beta']
+
+    values.iloc[n, locs['fi_a_std']] = res.std_err['omega']
+    values.iloc[n, locs['fi_b_std']] = res.std_err['y[1]']
+    values.iloc[n, locs['fi_alpha_0_std']] = res.std_err['Const']
+    values.iloc[n, locs['fi_phi_std']] = res.std_err['phi']
+    values.iloc[n, locs['fi_d_std']] = res.std_err['d']
+    values.iloc[n, locs['fi_beta_std']] = res.std_err['beta']
+
+    values.iloc[n, locs['fi_a_sig']] = res.pvalues['omega'] >= 0.05
+    values.iloc[n, locs['fi_b_sig']] = res.pvalues['y[1]'] >= 0.05
+    values.iloc[n, locs['fi_alpha_0_sig']] = res.pvalues['Const'] >= 0.05
+    values.iloc[n, locs['fi_phi_sig']] = res.pvalues['phi'] >= 0.05
+    values.iloc[n, locs['fi_d_sig']] = res.pvalues['d'] >= 0.05
+    values.iloc[n, locs['fi_beta_sig']] = res.pvalues['beta'] >= 0.05
 
     return values
     # returns = abs(returns)
@@ -205,6 +301,23 @@ def plot():
     plt.show()
 
 if __name__ == '__main__':
+    # cwd = os.path.dirname(os.path.realpath(__file__))
+    # padda = os.path.join(cwd, "../Scriptie2/data/", "test.p")
+    # padda = os.path.abspath(padda)
+    #
+    # ret = pickle.load(open(padda, 'rb'))
+    # fit = get_figarch(ret, 0, [], [])
+    # pass
+    # sim = Simulation()
+    # sim.run()
+    # returns = np.asarray(sim.df['return'])
+    # returns = returns[999:]
+    # cwd = os.path.dirname(os.path.realpath(__file__))
+    # autocorr_path1 = os.path.join(cwd, "data", "test.p")
+    # autocorr_path1 = os.path.abspath(autocorr_path1)
+    # pickle.dump(returns, open(autocorr_path1, "wb"))
+
+    # exit()
     sim = Simulation()
     n = 1000
     locs = init_locs()
@@ -226,7 +339,46 @@ if __name__ == '__main__':
         sq_returns[i, :] = autocorr3
         values_df = values
 
-    values_df.loc['mean'] = values_df.mean()
+    values_df.loc[n] = values_df.mean(numeric_only=True)
+
+    a = values_df.loc[0:n, 'garch_a_sig'].value_counts(normalize=True)
+    b = values_df.loc[0:n, 'garch_b_sig'].value_counts(normalize=True)
+    c = values_df.loc[0:n, 'garch_alpha_0_sig'].value_counts(normalize=True)
+    d = values_df.loc[0:n, 'garch_alpha_1_sig'].value_counts(normalize=True)
+    e = values_df.loc[0:n, 'garch_beta_sig'].value_counts(normalize=True)
+
+    a.index = a.index.astype('string')
+    b.index = b.index.astype('string')
+    c.index = c.index.astype('string')
+    d.index = d.index.astype('string')
+    e.index = e.index.astype('string')
+
+    values_df['garch_a_sig'].at[n] = a['True'] if 'True' in a else 0.0
+    values_df['garch_b_sig'].at[n] = b['True'] if 'True' in b else 0.0
+    values_df['garch_alpha_0_sig'].at[n] = c['True'] if 'True' in c else 0.0
+    values_df['garch_alpha_1_sig'].at[n] = d['True'] if 'True' in d else 0.0
+    values_df['garch_beta_sig'].at[n] = e['True'] if 'True' in e else 0.0
+
+    f = values_df.loc[0:n, 'fi_a_sig'].value_counts(normalize=True)
+    g = values_df.loc[0:n, 'fi_b_sig'].value_counts(normalize=True)
+    h = values_df.loc[0:n, 'fi_alpha_0_sig'].value_counts(normalize=True)
+    i = values_df.loc[0:n, 'fi_phi_sig'].value_counts(normalize=True)
+    j = values_df.loc[0:n, 'fi_d_sig'].value_counts(normalize=True)
+    k = values_df.loc[0:n, 'fi_beta_sig'].value_counts(normalize=True)
+
+    f.index = f.index.astype('string')
+    g.index = g.index.astype('string')
+    h.index = h.index.astype('string')
+    i.index = i.index.astype('string')
+    j.index = j.index.astype('string')
+    k.index = k.index.astype('string')
+
+    values_df['fi_a_sig'].at[n] = f['True'] if 'True' in f else 0.0
+    values_df['fi_b_sig'].at[n] = g['True'] if 'True' in g else 0.0
+    values_df['fi_alpha_0_sig'].at[n] = h['True'] if 'True' in h else 0.0
+    values_df['fi_phi_sig'].at[n] = i['True'] if 'True' in i else 0.0
+    values_df['fi_d_sig'].at[n] = j['True'] if 'True' in j else 0.0
+    values_df['fi_beta_sig'].at[n] = k['True'] if 'True' in k else 0.0
 
     cwd = os.path.dirname(os.path.realpath(__file__))
     # # price_path = os.path.join(cwd, "../Scriptie/data", "data.p")
