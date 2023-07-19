@@ -60,11 +60,11 @@ def get_figarch(returns, n, values, locs):
     values.iloc[n, locs['garch_alpha_1_std']] = res.std_err['alpha[1]']
     values.iloc[n, locs['garch_beta_std']] = res.std_err['beta[1]']
 
-    values.iloc[n, locs['garch_a_sig']] = res.params['omega'] >= 0.05
-    values.iloc[n, locs['garch_b_sig']] = res.params['y[1]'] >= 0.05
-    values.iloc[n, locs['garch_alpha_0_sig']] = res.params['Const'] >= 0.05
-    values.iloc[n, locs['garch_alpha_1_sig']] = res.params['alpha[1]'] >= 0.05
-    values.iloc[n, locs['garch_beta_sig']] = res.params['beta[1]'] >= 0.05
+    values.iloc[n, locs['garch_a_sig']] = res.pvalues['omega'] <= 0.05
+    values.iloc[n, locs['garch_b_sig']] = res.pvalues['y[1]'] <= 0.05
+    values.iloc[n, locs['garch_alpha_0_sig']] = res.pvalues['Const'] <= 0.05
+    values.iloc[n, locs['garch_alpha_1_sig']] = res.pvalues['alpha[1]'] <= 0.05
+    values.iloc[n, locs['garch_beta_sig']] = res.pvalues['beta[1]'] <= 0.05
 
     model.volatility = arch.univariate.volatility.FIGARCH(p=1, q=1)
     res = model.fit(disp=False)
@@ -83,12 +83,12 @@ def get_figarch(returns, n, values, locs):
     values.iloc[n, locs['fi_d_std']] = res.std_err['d']
     values.iloc[n, locs['fi_beta_std']] = res.std_err['beta']
 
-    values.iloc[n, locs['fi_a_sig']] = res.pvalues['omega'] >= 0.05
-    values.iloc[n, locs['fi_b_sig']] = res.pvalues['y[1]'] >= 0.05
-    values.iloc[n, locs['fi_alpha_0_sig']] = res.pvalues['Const'] >= 0.05
-    values.iloc[n, locs['fi_phi_sig']] = res.pvalues['phi'] >= 0.05
-    values.iloc[n, locs['fi_d_sig']] = res.pvalues['d'] >= 0.05
-    values.iloc[n, locs['fi_beta_sig']] = res.pvalues['beta'] >= 0.05
+    values.iloc[n, locs['fi_a_sig']] = res.pvalues['omega'] <= 0.05
+    values.iloc[n, locs['fi_b_sig']] = res.pvalues['y[1]'] <= 0.05
+    values.iloc[n, locs['fi_alpha_0_sig']] = res.pvalues['Const'] <= 0.05
+    values.iloc[n, locs['fi_phi_sig']] = res.pvalues['phi'] <= 0.05
+    values.iloc[n, locs['fi_d_sig']] = res.pvalues['d'] <= 0.05
+    values.iloc[n, locs['fi_beta_sig']] = res.pvalues['beta'] <= 0.05
 
     return values
 
