@@ -1,7 +1,6 @@
 from Simulation import Simulation
 import warnings
-warnings.simplefilter(action='ignore', category=FutureWarning)
-
+warnings.simplefilter(action='ignore')
 import pandas as pd
 import numpy as np
 import Analyze as an
