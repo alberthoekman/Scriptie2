@@ -50,13 +50,13 @@ def get_figarch(returns, n, values, locs):
 
     values.iloc[n, locs['garch_a']] = res.params['omega']
     values.iloc[n, locs['garch_b']] = res.params['y[1]']
-    values.iloc[n, locs['garch_alpha_0']] = res.params['Const']
+    values.iloc[n, locs['garch_alpha_0']] = res.params['Const'] / 1000
     values.iloc[n, locs['garch_alpha_1']] = res.params['alpha[1]']
     values.iloc[n, locs['garch_beta']] = res.params['beta[1]']
 
     values.iloc[n, locs['garch_a_std']] = res.std_err['omega']
     values.iloc[n, locs['garch_b_std']] = res.std_err['y[1]']
-    values.iloc[n, locs['garch_alpha_0_std']] = res.std_err['Const']
+    values.iloc[n, locs['garch_alpha_0_std']] = res.std_err['Const'] / 1000
     values.iloc[n, locs['garch_alpha_1_std']] = res.std_err['alpha[1]']
     values.iloc[n, locs['garch_beta_std']] = res.std_err['beta[1]']
 
@@ -71,14 +71,14 @@ def get_figarch(returns, n, values, locs):
 
     values.iloc[n, locs['fi_a']] = res.params['omega']
     values.iloc[n, locs['fi_b']] = res.params['y[1]']
-    values.iloc[n, locs['fi_alpha_0']] = res.params['Const']
+    values.iloc[n, locs['fi_alpha_0']] = res.params['Const'] / 1000
     values.iloc[n, locs['fi_phi']] = res.params['phi']
     values.iloc[n, locs['fi_d']] = res.params['d']
     values.iloc[n, locs['fi_beta']] = res.params['beta']
 
     values.iloc[n, locs['fi_a_std']] = res.std_err['omega']
     values.iloc[n, locs['fi_b_std']] = res.std_err['y[1]']
-    values.iloc[n, locs['fi_alpha_0_std']] = res.std_err['Const']
+    values.iloc[n, locs['fi_alpha_0_std']] = res.std_err['Const'] / 1000
     values.iloc[n, locs['fi_phi_std']] = res.std_err['phi']
     values.iloc[n, locs['fi_d_std']] = res.std_err['d']
     values.iloc[n, locs['fi_beta_std']] = res.std_err['beta']
@@ -193,6 +193,8 @@ def single_post_process(df, n, values, locs):
     values.iloc[n, locs['var']] = np.var(returns)
     values.iloc[n, locs['kurtosis']] = sc.stats.kurtosis(returns)
     values.iloc[n, locs['srange']] = (max(returns) - min(returns)) / np.std(returns)
+
+    returns = returns * 1000
 
     autocorr1, autocorr2, autocorr3, abs_power, sq_power = get_autocorr(returns)
     values.iloc[n, locs['abs_ac_plaw']] = abs_power

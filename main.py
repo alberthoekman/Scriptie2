@@ -43,12 +43,12 @@ def init_df(ne):
         "fi_phi_std": pd.Series(dtype="float"),
         "fi_d_std": pd.Series(dtype="float"),
         "fi_beta_std": pd.Series(dtype="float"),
-        "fi_a_sig": pd.Series(),
-        "fi_b_sig": pd.Series(),
-        "fi_alpha_0_sig": pd.Series(),
-        "fi_phi_sig": pd.Series(),
-        "fi_d_sig": pd.Series(),
-        "fi_beta_sig": pd.Series(),
+        "fi_a_sig": pd.Series(dtype="object"),
+        "fi_b_sig": pd.Series(dtype="object"),
+        "fi_alpha_0_sig": pd.Series(dtype="object"),
+        "fi_phi_sig": pd.Series(dtype="object"),
+        "fi_d_sig": pd.Series(dtype="object"),
+        "fi_beta_sig": pd.Series(dtype="object"),
     }, index=range(ne))
 
 
