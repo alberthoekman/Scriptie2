@@ -181,7 +181,7 @@ def process_sig(values_df, n):
 
 def dump_data(data, name):
     cwd = os.path.dirname(os.path.realpath(__file__))
-    padda = os.path.join(cwd, "data", name)
+    padda = os.path.join(cwd, "data2", name)
     padda = os.path.abspath(padda)
     pickle.dump(data, open(padda, "wb"))
 
