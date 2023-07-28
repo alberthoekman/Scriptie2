@@ -13,8 +13,8 @@ class Simulation:
         self.t_max = 6000
         self.start_price = 100
         self.annual = 250
-        self.n_fundamentalists = 9
-        self.n_chartists = 1
+        self.n_fundamentalists = 10
+        self.n_chartists = 0
 
         self.risk_free_rate = 0.05
         self.risk_free_return = 1 + (self.risk_free_rate / self.annual)
@@ -58,12 +58,14 @@ class Simulation:
             f_demand = 0
             c_demand = 0
 
-            for chartist in self.chartists:
-                c_demand += chartist.calculate_demand(sample_mean, sample_var, current)
+            if self.n_chartists > 0:
+                for chartist in self.chartists:
+                    c_demand += chartist.calculate_demand(sample_mean, sample_var, current)
 
-            for fundamentalist in self.fundamentalists:
-                # est_fundamental = self.market.calculate_next_fundamental(fundamental)
-                f_demand += fundamentalist.calculate_demand(current, fundamental)
+            if self.n_fundamentalists > 0:
+                for fundamentalist in self.fundamentalists:
+                    # est_fundamental = self.market.calculate_next_fundamental(fundamental)
+                    f_demand += fundamentalist.calculate_demand(current, fundamental)
 
             self.df.iloc[t, self.locs["f_demand"]] = f_demand
             self.df.iloc[t, self.locs["c_demand"]] = c_demand
@@ -83,25 +85,27 @@ class Simulation:
                 self.df.iloc[t+1, self.locs["var"]] = sample_var
 
     def populate_agents(self):
-        for i in range(0, self.n_fundamentalists):
-            fund = Fundamentalist(
-                self,
-                self.fundamentalist_rate,
-                self.fundamentalist_aversion
-            )
+        if self.n_fundamentalists > 0:
+            for i in range(0, self.n_fundamentalists):
+                fund = Fundamentalist(
+                    self,
+                    self.fundamentalist_rate,
+                    self.fundamentalist_aversion
+                )
 
-            self.fundamentalists.append(fund)
+                self.fundamentalists.append(fund)
 
-        for i in range(0, self.n_chartists):
-            chart = Chartist(
-                self,
-                self.chartist_rate,
-                self.chartist_aversion,
-                # self.rng.uniform(0.01, 1)
-                self.chartist_reaction
-            )
+        if self.n_chartists > 0:
+            for i in range(0, self.n_chartists):
+                chart = Chartist(
+                    self,
+                    self.chartist_rate,
+                    self.chartist_aversion,
+                    # self.rng.uniform(0.01, 1)
+                    self.chartist_reaction
+                )
 
-            self.chartists.append(chart)
+                self.chartists.append(chart)
 
     def init_df(self):
         df = pd.DataFrame({
