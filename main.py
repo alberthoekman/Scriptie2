@@ -49,6 +49,7 @@ def init_df(ne):
         "fi_phi_sig": pd.Series(dtype="object"),
         "fi_d_sig": pd.Series(dtype="object"),
         "fi_beta_sig": pd.Series(dtype="object"),
+        "r_plaw3": pd.Series(dtype="float"),
     }, index=range(ne))
 
 
@@ -95,6 +96,7 @@ def init_locs():
         "fi_phi_sig": 38,
         "fi_d_sig": 39,
         "fi_beta_sig": 40,
+        "r_plaw3": 41,
     }
 
 

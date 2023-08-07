@@ -108,10 +108,13 @@ def get_ret_plaws(data):
 
     indexes1 = np.where((x >= cond1) & (x < cond2))
     indexes2 = np.where(x >= cond2)
+    indexes3 = np.where(x >= cond1)
     x1 = x[indexes1]
     y1 = y[indexes1]
     x2 = x[indexes2]
     y2 = y[indexes2]
+    x3 = x[indexes3]
+    y3 = y[indexes3]
 
     if len(y1) > 0:
         plaw1 = sc.optimize.curve_fit(
@@ -135,7 +138,18 @@ def get_ret_plaws(data):
     else:
         plaw2 = 0
 
-    return -plaw1, -plaw2
+    if len(y3) > 0:
+        plaw3 = sc.optimize.curve_fit(
+            powerlaw,
+            xdata=x3,
+            ydata=y3,
+            p0=[-0.3, 2],
+            maxfev=10000
+        )[0][0]
+    else:
+        plaw3 = 0
+
+    return -plaw1, -plaw2, -plaw3
 
 def process_sig(values_df, n):
     a = values_df.loc[0:n, 'garch_a_sig'].value_counts(normalize=True)
@@ -200,9 +214,10 @@ def single_post_process(df, n, values, locs):
     values.iloc[n, locs['abs_ac_plaw']] = abs_power
     values.iloc[n, locs['sq_ac_plaw']] = sq_power
 
-    plaw1, plaw2 = get_ret_plaws(returns)
+    plaw1, plaw2, plaw3 = get_ret_plaws(returns)
     values.iloc[n, locs['r_plaw1']] = plaw1
     values.iloc[n, locs['r_plaw2']] = plaw2
+    values.iloc[n, locs['r_plaw3']] = plaw3
 
     values_df = get_figarch(returns, n, values, locs)
 
