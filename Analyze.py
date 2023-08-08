@@ -104,39 +104,39 @@ def get_ret_plaws(data):
     y = 1 - y
 
     cond1 = np.mean(abso) + np.std(abso)
-    cond2 = np.mean(abso) + (np.std(abso)*2)
+    # cond2 = np.mean(abso) + (np.std(abso)*2)
 
-    indexes1 = np.where((x >= cond1) & (x < cond2))
-    indexes2 = np.where(x >= cond2)
+    # indexes1 = np.where((x >= cond1) & (x < cond2))
+    # indexes2 = np.where(x >= cond2)
     indexes3 = np.where(x >= cond1)
-    x1 = x[indexes1]
-    y1 = y[indexes1]
-    x2 = x[indexes2]
-    y2 = y[indexes2]
+    # x1 = x[indexes1]
+    # y1 = y[indexes1]
+    # x2 = x[indexes2]
+    # y2 = y[indexes2]
     x3 = x[indexes3]
     y3 = y[indexes3]
 
-    if len(y1) > 0:
-        plaw1 = sc.optimize.curve_fit(
-            powerlaw,
-            xdata=x1,
-            ydata=y1,
-            p0=[-0.3, 2],
-            maxfev=10000
-        )[0][0]
-    else:
-        plaw1 = 0
-
-    if len(y2) > 0:
-        plaw2 = sc.optimize.curve_fit(
-            powerlaw,
-            xdata=x2,
-            ydata=y2,
-            p0=[-0.3, 2],
-            maxfev=10000
-        )[0][0]
-    else:
-        plaw2 = 0
+    # if len(y1) > 0:
+    #     plaw1 = sc.optimize.curve_fit(
+    #         powerlaw,
+    #         xdata=x1,
+    #         ydata=y1,
+    #         p0=[-0.3, 2],
+    #         maxfev=10000
+    #     )[0][0]
+    # else:
+    #     plaw1 = 0
+    #
+    # if len(y2) > 0:
+    #     plaw2 = sc.optimize.curve_fit(
+    #         powerlaw,
+    #         xdata=x2,
+    #         ydata=y2,
+    #         p0=[-0.3, 2],
+    #         maxfev=10000
+    #     )[0][0]
+    # else:
+    #     plaw2 = 0
 
     if len(y3) > 0:
         plaw3 = sc.optimize.curve_fit(
@@ -149,7 +149,7 @@ def get_ret_plaws(data):
     else:
         plaw3 = 0
 
-    return -plaw1, -plaw2, -plaw3
+    return plaw3
 
 def process_sig(values_df, n):
     a = values_df.loc[0:n, 'garch_a_sig'].value_counts(normalize=True)
@@ -195,7 +195,7 @@ def process_sig(values_df, n):
 
 def dump_data(data, name):
     cwd = os.path.dirname(os.path.realpath(__file__))
-    padda = os.path.join(cwd, "data10", name)
+    padda = os.path.join(cwd, "data", name)
     padda = os.path.abspath(padda)
     pickle.dump(data, open(padda, "wb"))
 
@@ -206,6 +206,9 @@ def single_post_process(df, n, values, locs):
     values.iloc[n, locs['mean']] = np.mean(returns)
     values.iloc[n, locs['var']] = np.var(returns)
     values.iloc[n, locs['kurtosis']] = sc.stats.kurtosis(returns)
+    values.iloc[n, locs['skewness']] = sc.stats.skew(returns)
+    values.iloc[n, locs['min']] = min(returns)
+    values.iloc[n, locs['max']] = max(returns)
     values.iloc[n, locs['srange']] = (max(returns) - min(returns)) / np.std(returns)
 
     returns = returns * 1000
@@ -214,9 +217,9 @@ def single_post_process(df, n, values, locs):
     values.iloc[n, locs['abs_ac_plaw']] = abs_power
     values.iloc[n, locs['sq_ac_plaw']] = sq_power
 
-    plaw1, plaw2, plaw3 = get_ret_plaws(returns)
-    values.iloc[n, locs['r_plaw1']] = plaw1
-    values.iloc[n, locs['r_plaw2']] = plaw2
+    plaw3 = get_ret_plaws(returns)
+    # values.iloc[n, locs['r_plaw1']] = plaw1
+    # values.iloc[n, locs['r_plaw2']] = plaw2
     values.iloc[n, locs['r_plaw3']] = plaw3
 
     values_df = get_figarch(returns, n, values, locs)

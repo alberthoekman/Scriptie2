@@ -50,6 +50,9 @@ def init_df(ne):
         "fi_d_sig": pd.Series(dtype="object"),
         "fi_beta_sig": pd.Series(dtype="object"),
         "r_plaw3": pd.Series(dtype="float"),
+        "min": pd.Series(dtype="float"),
+        "max": pd.Series(dtype="float"),
+        "skewness": pd.Series(dtype="float"),
     }, index=range(ne))
 
 
@@ -97,6 +100,9 @@ def init_locs():
         "fi_d_sig": 39,
         "fi_beta_sig": 40,
         "r_plaw3": 41,
+        "min": 42,
+        "max": 43,
+        "skewness": 44,
     }
 
 
