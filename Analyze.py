@@ -46,6 +46,7 @@ def get_autocorr(returns):
 def get_figarch(returns, n, values, locs):
     model = arch.univariate.ARX(returns, lags=1, rescale=False)
     model.volatility = arch.univariate.volatility.GARCH(p=1, q=1)
+    model.distribution = arch.univariate.distribution.StudentsT()
     res = model.fit(disp=False)
 
     values.iloc[n, locs['garch_a']] = res.params['omega']
@@ -195,7 +196,7 @@ def process_sig(values_df, n):
 
 def dump_data(data, name):
     cwd = os.path.dirname(os.path.realpath(__file__))
-    padda = os.path.join(cwd, "data6", name)
+    padda = os.path.join(cwd, "data", name)
     padda = os.path.abspath(padda)
     pickle.dump(data, open(padda, "wb"))
 
