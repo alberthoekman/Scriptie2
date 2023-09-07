@@ -49,15 +49,15 @@ def get_figarch(returns, n, values, locs):
     model.distribution = arch.univariate.distribution.StudentsT()
     res = model.fit(disp=False)
 
-    values.iloc[n, locs['garch_a']] = res.params['omega']
+    values.iloc[n, locs['garch_a']] = res.params['Const'] / 1000
     values.iloc[n, locs['garch_b']] = res.params['y[1]']
-    values.iloc[n, locs['garch_alpha_0']] = res.params['Const'] / 1000
+    values.iloc[n, locs['garch_alpha_0']] = res.params['omega'] / 1000
     values.iloc[n, locs['garch_alpha_1']] = res.params['alpha[1]']
     values.iloc[n, locs['garch_beta']] = res.params['beta[1]']
 
-    values.iloc[n, locs['garch_a_std']] = res.std_err['omega']
+    values.iloc[n, locs['garch_a_std']] = res.std_err['Const'] / 1000
     values.iloc[n, locs['garch_b_std']] = res.std_err['y[1]']
-    values.iloc[n, locs['garch_alpha_0_std']] = res.std_err['Const'] / 1000
+    values.iloc[n, locs['garch_alpha_0_std']] = res.std_err['omega'] / 1000
     values.iloc[n, locs['garch_alpha_1_std']] = res.std_err['alpha[1]']
     values.iloc[n, locs['garch_beta_std']] = res.std_err['beta[1]']
 
@@ -70,16 +70,16 @@ def get_figarch(returns, n, values, locs):
     model.volatility = arch.univariate.volatility.FIGARCH(p=1, q=1)
     res = model.fit(disp=False)
 
-    values.iloc[n, locs['fi_a']] = res.params['omega']
+    values.iloc[n, locs['fi_a']] = res.params['Const'] / 1000
     values.iloc[n, locs['fi_b']] = res.params['y[1]']
-    values.iloc[n, locs['fi_alpha_0']] = res.params['Const'] / 1000
+    values.iloc[n, locs['fi_alpha_0']] = res.params['omega'] / 1000
     values.iloc[n, locs['fi_phi']] = res.params['phi']
     values.iloc[n, locs['fi_d']] = res.params['d']
     values.iloc[n, locs['fi_beta']] = res.params['beta']
 
-    values.iloc[n, locs['fi_a_std']] = res.std_err['omega']
+    values.iloc[n, locs['fi_a_std']] = res.std_err['Const'] / 1000
     values.iloc[n, locs['fi_b_std']] = res.std_err['y[1]']
-    values.iloc[n, locs['fi_alpha_0_std']] = res.std_err['Const'] / 1000
+    values.iloc[n, locs['fi_alpha_0_std']] = res.std_err['omega'] / 1000
     values.iloc[n, locs['fi_phi_std']] = res.std_err['phi']
     values.iloc[n, locs['fi_d_std']] = res.std_err['d']
     values.iloc[n, locs['fi_beta_std']] = res.std_err['beta']
@@ -196,7 +196,7 @@ def process_sig(values_df, n):
 
 def dump_data(data, name):
     cwd = os.path.dirname(os.path.realpath(__file__))
-    padda = os.path.join(cwd, "data11", name)
+    padda = os.path.join(cwd, "data", name)
     padda = os.path.abspath(padda)
     pickle.dump(data, open(padda, "wb"))
 
