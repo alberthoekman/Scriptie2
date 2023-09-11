@@ -46,7 +46,7 @@ def get_autocorr(returns):
 def get_figarch(returns, n, values, locs):
     model = arch.univariate.ARX(returns, lags=1, rescale=False)
     model.volatility = arch.univariate.volatility.GARCH(p=1, q=1)
-    model.distribution = arch.univariate.distribution.StudentsT()
+    # model.distribution = arch.univariate.distribution.StudentsT()
     res = model.fit(disp=False)
 
     values.iloc[n, locs['garch_a']] = res.params['Const'] / 1000
@@ -61,9 +61,9 @@ def get_figarch(returns, n, values, locs):
     values.iloc[n, locs['garch_alpha_1_std']] = res.std_err['alpha[1]']
     values.iloc[n, locs['garch_beta_std']] = res.std_err['beta[1]']
 
-    values.iloc[n, locs['garch_a_sig']] = res.pvalues['omega'] <= 0.05
+    values.iloc[n, locs['garch_a_sig']] = res.pvalues['Const'] <= 0.05
     values.iloc[n, locs['garch_b_sig']] = res.pvalues['y[1]'] <= 0.05
-    values.iloc[n, locs['garch_alpha_0_sig']] = res.pvalues['Const'] <= 0.05
+    values.iloc[n, locs['garch_alpha_0_sig']] = res.pvalues['omega'] <= 0.05
     values.iloc[n, locs['garch_alpha_1_sig']] = res.pvalues['alpha[1]'] <= 0.05
     values.iloc[n, locs['garch_beta_sig']] = res.pvalues['beta[1]'] <= 0.05
 
@@ -84,9 +84,9 @@ def get_figarch(returns, n, values, locs):
     values.iloc[n, locs['fi_d_std']] = res.std_err['d']
     values.iloc[n, locs['fi_beta_std']] = res.std_err['beta']
 
-    values.iloc[n, locs['fi_a_sig']] = res.pvalues['omega'] <= 0.05
+    values.iloc[n, locs['fi_a_sig']] = res.pvalues['Const'] <= 0.05
     values.iloc[n, locs['fi_b_sig']] = res.pvalues['y[1]'] <= 0.05
-    values.iloc[n, locs['fi_alpha_0_sig']] = res.pvalues['Const'] <= 0.05
+    values.iloc[n, locs['fi_alpha_0_sig']] = res.pvalues['omega'] <= 0.05
     values.iloc[n, locs['fi_phi_sig']] = res.pvalues['phi'] <= 0.05
     values.iloc[n, locs['fi_d_sig']] = res.pvalues['d'] <= 0.05
     values.iloc[n, locs['fi_beta_sig']] = res.pvalues['beta'] <= 0.05
@@ -196,7 +196,7 @@ def process_sig(values_df, n):
 
 def dump_data(data, name):
     cwd = os.path.dirname(os.path.realpath(__file__))
-    padda = os.path.join(cwd, "data9", name)
+    padda = os.path.join(cwd, "data", name)
     padda = os.path.abspath(padda)
     pickle.dump(data, open(padda, "wb"))
 
@@ -219,8 +219,8 @@ def single_post_process(df, n, values, locs):
     values.iloc[n, locs['sq_ac_plaw']] = sq_power
 
     plaw3 = get_ret_plaws(returns)
-    # values.iloc[n, locs['r_plaw1']] = plaw1
-    # values.iloc[n, locs['r_plaw2']] = plaw2
+    values.iloc[n, locs['r_plaw1']] = plaw3
+    values.iloc[n, locs['r_plaw2']] = plaw3
     values.iloc[n, locs['r_plaw3']] = plaw3
 
     values_df = get_figarch(returns, n, values, locs)
