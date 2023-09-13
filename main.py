@@ -1,10 +1,12 @@
 from Simulation import Simulation
 import warnings
-warnings.simplefilter(action='ignore')
+warnings.filterwarnings(action='ignore')
 import pandas as pd
 import numpy as np
 import Analyze as an
+from arch.utility.exceptions import ConvergenceWarning
 
+warnings.filterwarnings("error", "", ConvergenceWarning)
 
 def init_df(ne):
     return pd.DataFrame({
@@ -127,9 +129,9 @@ if __name__ == '__main__':
     sim = Simulation()
     n = 1000
     locs = init_locs()
-    returns = np.zeros((n, 5000))
-    abs_returns = np.zeros((n, 5000))
-    sq_returns = np.zeros((n, 5000))
+    returns = np.full((n, 5000), np.nan)
+    abs_returns = np.full((n, 5000), np.nan)
+    sq_returns = np.full((n, 5000), np.nan)
     values_df = init_df(n)
 
     for i in range(0, n):
@@ -139,7 +141,11 @@ if __name__ == '__main__':
         except (OverflowError, FloatingPointError):
             print(str(i) + '\n')
             print(sim.df['price'].to_string(index=False))
-        autocorr1, autocorr2, autocorr3, values = an.single_post_process(sim.df, i, values_df, locs)
+
+        try:
+            autocorr1, autocorr2, autocorr3, values = an.single_post_process(sim.df, i, values_df, locs)
+        except ConvergenceWarning as e:
+            continue
         returns[i, :] = autocorr1
         abs_returns[i, :] = autocorr2
         sq_returns[i, :] = autocorr3
@@ -147,7 +153,7 @@ if __name__ == '__main__':
 
     values_df.loc[n] = values_df.mean(numeric_only=True)
     values_df = an.process_sig(values_df, n)
-    an.dump_data(np.mean(returns, axis=0), 'autocorr1.p')
-    an.dump_data(np.mean(abs_returns, axis=0), 'autocorr2.p')
-    an.dump_data(np.mean(sq_returns, axis=0), 'autocorr3.p')
+    an.dump_data(np.nanmean(returns, axis=0), 'autocorr1.p')
+    an.dump_data(np.nanmean(abs_returns, axis=0), 'autocorr2.p')
+    an.dump_data(np.nanmean(sq_returns, axis=0), 'autocorr3.p')
     an.dump_data(values_df, 'values.p')
