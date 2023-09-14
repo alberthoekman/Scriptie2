@@ -6,7 +6,8 @@ import numpy as np
 import Analyze as an
 from arch.utility.exceptions import ConvergenceWarning
 
-warnings.filterwarnings("error", "", ConvergenceWarning)
+class WarningException(Exception):
+    pass
 
 def init_df(ne):
     return pd.DataFrame({
@@ -143,8 +144,13 @@ if __name__ == '__main__':
             print(sim.df['price'].to_string(index=False))
 
         try:
-            autocorr1, autocorr2, autocorr3, values = an.single_post_process(sim.df, i, values_df, locs)
-        except ConvergenceWarning as e:
+            with warnings.catch_warnings(record=True) as wars:
+                autocorr1, autocorr2, autocorr3, values = an.single_post_process(sim.df, i, values_df, locs)
+            
+            for war in wars:
+                if issubclass(war.category, ConvergenceWarning):
+                    raise WarningException("moi")
+        except WarningException as e:
             continue
         returns[i, :] = autocorr1
         abs_returns[i, :] = autocorr2
