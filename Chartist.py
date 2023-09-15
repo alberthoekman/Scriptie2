@@ -19,12 +19,9 @@ class Chartist(Investor):
         return current + one
 
     def estimate_vol(self, sample_var):
-        rfr = self.sim.risk_free_rate ** 2
-        one = self.reaction * sample_var
-        two = 1 + rfr + one
         var = self.sim.fundamental_variance
 
-        return self.aversion * var * two
+        return self.aversion * (var + sample_var)
 
 
     # def calculate_demand(self, sample_mean, sample_var, current):

@@ -146,7 +146,7 @@ if __name__ == '__main__':
         try:
             with warnings.catch_warnings(record=True) as wars:
                 autocorr1, autocorr2, autocorr3, values = an.single_post_process(sim.df, i, values_df, locs)
-            
+
             for war in wars:
                 if issubclass(war.category, ConvergenceWarning):
                     raise WarningException("moi")
