@@ -17,28 +17,24 @@ def get_ac_plaw(y):
 
 
 def get_autocorr(returns):
-    mean = np.mean(returns)
-    corr_returns = returns - mean
     std = np.std(returns)
     sq_returns = returns ** 2
-    corr_sq_returns = sq_returns - np.mean(sq_returns)
     abs_returns = abs(returns)
-    corr_abs_returns = abs_returns - np.mean(abs_returns)
 
-    autocorr1 = np.correlate(corr_returns, corr_returns, mode='full')
-    autocorr1 = autocorr1 / (len(corr_returns) * (std ** 2))
+    autocorr1 = np.correlate(returns, returns, mode='full')
+    autocorr1 = autocorr1 / (len(returns) * (std ** 2))
     autocorr1 = autocorr1[len(autocorr1) // 2 + 1:]
 
-    autocorr2 = np.correlate(corr_sq_returns, corr_sq_returns, mode='full')
-    autocorr2 = autocorr2 / (len(corr_sq_returns) * (np.std(sq_returns) ** 2))
+    autocorr2 = np.correlate(abs_returns, abs_returns, mode='full')
+    autocorr2 = autocorr2 / (len(abs_returns) * (np.std(abs_returns) ** 2))
     autocorr2 = autocorr2[len(autocorr2) // 2 + 1:]
 
-    autocorr3 = np.correlate(corr_abs_returns, corr_abs_returns, mode='full')
-    autocorr3 = autocorr3 / (len(abs_returns) * (np.std(abs_returns) ** 2))
+    autocorr3 = np.correlate(sq_returns, sq_returns, mode='full')
+    autocorr3 = autocorr3 / (len(sq_returns) * (np.std(sq_returns) ** 2))
     autocorr3 = autocorr3[len(autocorr3) // 2 + 1:]
 
-    abs_power = get_ac_plaw(autocorr3)
-    sq_power = get_ac_plaw(autocorr2)
+    abs_power = get_ac_plaw(autocorr2)
+    sq_power = get_ac_plaw(autocorr3)
 
     return autocorr1, autocorr2, autocorr3, abs_power, sq_power
 
@@ -196,7 +192,7 @@ def process_sig(values_df, n):
 
 def dump_data(data, name):
     cwd = os.path.dirname(os.path.realpath(__file__))
-    padda = os.path.join(cwd, "data11", name)
+    padda = os.path.join(cwd, name)
     padda = os.path.abspath(padda)
     pickle.dump(data, open(padda, "wb"))
 
