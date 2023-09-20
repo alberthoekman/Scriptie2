@@ -130,7 +130,7 @@ if __name__ == '__main__':
 
     # exit()
     sim = Simulation()
-    n = 1000
+    n = 10
     locs = init_locs()
     returns = np.full((n, 5000), np.nan)
     abs_returns = np.full((n, 5000), np.nan)
@@ -162,6 +162,9 @@ if __name__ == '__main__':
 
     values_df.loc[n] = values_df.mean(numeric_only=True)
     values_df = an.process_sig(values_df, n)
+    an.dump_data(returns, 'returns.p')
+    an.dump_data(abs_returns, 'abs_returns.p')
+    an.dump_data(sq_returns, 'sq_returns.p')
     an.dump_data(np.nanmean(returns, axis=0), 'autocorr1.p')
     an.dump_data(np.nanmean(abs_returns, axis=0), 'autocorr2.p')
     an.dump_data(np.nanmean(sq_returns, axis=0), 'autocorr3.p')
