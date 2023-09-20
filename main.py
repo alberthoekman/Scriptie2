@@ -9,6 +9,8 @@ from arch.utility.exceptions import ConvergenceWarning
 class WarningException(Exception):
     pass
 
+warnings.filterwarnings("always", "", ConvergenceWarning)
+
 def init_df(ne):
     return pd.DataFrame({
         "mean": pd.Series(dtype="float"),
