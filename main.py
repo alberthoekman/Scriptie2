@@ -142,6 +142,7 @@ if __name__ == '__main__':
         except (OverflowError, FloatingPointError):
             print(str(i) + '\n')
             print(sim.df['price'].to_string(index=False))
+            continue
 
         try:
             with warnings.catch_warnings(record=True) as wars:
