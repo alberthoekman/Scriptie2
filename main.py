@@ -130,7 +130,7 @@ if __name__ == '__main__':
 
     # exit()
     sim = Simulation()
-    n = 10
+    n = 100
     locs = init_locs()
     returns = np.full((n, 5000), np.nan)
     abs_returns = np.full((n, 5000), np.nan)
