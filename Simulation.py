@@ -13,8 +13,8 @@ class Simulation:
         self.t_max = 6000
         self.start_price = 100
         self.annual = 250
-        self.n_fundamentalists = 6
-        self.n_chartists = 4
+        self.n_fundamentalists = 4
+        self.n_chartists = 6
 
         self.risk_free_rate = 0.05
         self.risk_free_return = 1 + (self.risk_free_rate / self.annual)
