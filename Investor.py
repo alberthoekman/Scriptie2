@@ -9,7 +9,7 @@ class Investor(metaclass=ABCMeta):
     def calculate_gain(self, expected, current):
         r = self.sim.risk_free_return
 
-        return expected - (r * current)
+        return expected + self.sim.dividend_mean - (r * current)
 
     # def calculate_wealth(self, gain):
     #     r = self.sim.risk_free_return

@@ -13,14 +13,16 @@ class Simulation:
         self.t_max = 6000
         self.start_price = 100
         self.annual = 250
-        self.n_fundamentalists = 10
-        self.n_chartists = 0
+        self.n_fundamentalists = 5
+        self.n_chartists = 5
 
         self.risk_free_rate = 0.05
         self.risk_free_return = 1 + (self.risk_free_rate / self.annual)
         self.volatility = 0.2
         self.fundamental_mean = 100
+        self.dividend_mean = self.fundamental_mean * (self.risk_free_return - 1)
         self.fundamental_variance = ((self.volatility * self.fundamental_mean) ** 2) / self.annual
+        self.dividend_variance = (self.risk_free_rate ** 2) * self.fundamental_variance
         self.error_variance = 0.01265
         self.decay_rate = 0.85
         # self.noise_demand_variance = 1 * ((self.n_fundamentalists + self.n_chartists) / 2)
@@ -69,6 +71,9 @@ class Simulation:
 
             self.df.iloc[t, self.locs["f_demand"]] = f_demand
             self.df.iloc[t, self.locs["c_demand"]] = c_demand
+
+            if t == 3000:
+                pass
 
             if t != self.t_max-1:
                 new = self.market.calculate_new_price(current, f_demand, c_demand)
