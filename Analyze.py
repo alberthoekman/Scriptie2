@@ -192,7 +192,7 @@ def process_sig(values_df, n):
 
 def dump_data(data, name):
     cwd = os.path.dirname(os.path.realpath(__file__))
-    padda = os.path.join(cwd, "data12", name)
+    padda = os.path.join(cwd, "data", name)
     padda = os.path.abspath(padda)
     pickle.dump(data, open(padda, "wb"))
 
@@ -222,3 +222,4 @@ def single_post_process(df, n, values, locs):
     values_df = get_figarch(returns, n, values, locs)
 
     return autocorr1, autocorr2, autocorr3, values_df
+

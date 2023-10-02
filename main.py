@@ -130,7 +130,7 @@ if __name__ == '__main__':
 
     # exit()
     sim = Simulation()
-    n = 1000
+    n = 10
     locs = init_locs()
     returns = np.full((n, 5000), np.nan)
     abs_returns = np.full((n, 5000), np.nan)
@@ -148,24 +148,28 @@ if __name__ == '__main__':
 
         try:
             with warnings.catch_warnings(record=True) as wars:
-                autocorr1, autocorr2, autocorr3, values = an.single_post_process(sim.df, i, values_df, locs)
+                # autocorr1, autocorr2, autocorr3, values = an.single_post_process(sim.df, i, values_df, locs)
+                rets = np.asarray(sim.df['return'])
+                rets = rets[999:]
+                rets = rets * 1000
+                an.dump_data(rets, 'data11/rets/rets' + str(i) + '.p')
 
             for war in wars:
                 if issubclass(war.category, ConvergenceWarning):
                     raise WarningException("moi")
         except WarningException as e:
             continue
-        returns[i, :] = autocorr1
-        abs_returns[i, :] = autocorr2
-        sq_returns[i, :] = autocorr3
-        values_df = values
+        # returns[i, :] = autocorr1
+        # abs_returns[i, :] = autocorr2
+        # sq_returns[i, :] = autocorr3
+        # values_df = values
 
-    values_df.loc[n] = values_df.mean(numeric_only=True)
-    values_df = an.process_sig(values_df, n)
-    an.dump_data(returns, 'returns.p')
-    an.dump_data(abs_returns, 'abs_returns.p')
-    an.dump_data(sq_returns, 'sq_returns.p')
-    an.dump_data(np.nanmean(returns, axis=0), 'autocorr1.p')
-    an.dump_data(np.nanmean(abs_returns, axis=0), 'autocorr2.p')
-    an.dump_data(np.nanmean(sq_returns, axis=0), 'autocorr3.p')
-    an.dump_data(values_df, 'values.p')
+    # values_df.loc[n] = values_df.mean(numeric_only=True)
+    # values_df = an.process_sig(values_df, n)
+    # an.dump_data(returns, 'returns.p')
+    # an.dump_data(abs_returns, 'abs_returns.p')
+    # an.dump_data(sq_returns, 'sq_returns.p')
+    # an.dump_data(np.nanmean(returns, axis=0), 'autocorr1.p')
+    # an.dump_data(np.nanmean(abs_returns, axis=0), 'autocorr2.p')
+    # an.dump_data(np.nanmean(sq_returns, axis=0), 'autocorr3.p')
+    # an.dump_data(values_df, 'values.p')

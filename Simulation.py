@@ -7,14 +7,14 @@ import pandas as pd
 
 
 class Simulation:
-    def __init__(self):
+    def __init__(self, funds, charts):
         self.market = Market(self)
         self.rng = default_rng()
         self.t_max = 6000
         self.start_price = 100
         self.annual = 250
-        self.n_fundamentalists = 10
-        self.n_chartists = 0
+        self.n_fundamentalists = funds
+        self.n_chartists = charts
 
         self.risk_free_rate = 0.05
         self.risk_free_return = 1 + (self.risk_free_rate / self.annual)
