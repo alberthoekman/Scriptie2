@@ -80,7 +80,7 @@ opper = pd.DataFrame({
 
 for combo in combos:
     sim = Simulation(combo[0], combo[1])
-    n = 2
+    n = 1000
     values_df = init_df(n)
 
     for i in range(0, n):
