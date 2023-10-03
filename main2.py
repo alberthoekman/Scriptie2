@@ -55,6 +55,16 @@ def init_df(ne):
         "BIC_FIGARCH_lower": pd.Series()
     }, index=range(ne))
 
+def init_locs():
+    return {
+        "AIC_GARCH": 0,
+        "AIC_FIGARCH": 1,
+        "BIC_GARCH": 2,
+        "BIC_FIGARCH": 3,
+        "AIC_FIGARCH_lower": 4,
+        "BIC_FIGARCH_lower": 5
+    }
+
 combos = [
     (5, 5),
     (4, 6),
@@ -78,6 +88,8 @@ opper = pd.DataFrame({
     "BIC_FIGARCH_lower": pd.Series()
 }, index=['5/5', '4/6', '3/7', '2/8', '1/9', '6/4', '7/3', '8/2', '9/1', '10/0', '0/10'])
 
+locs = init_locs()
+
 for combo in combos:
     sim = Simulation(combo[0], combo[1])
     n = 1000
@@ -98,12 +110,12 @@ for combo in combos:
                 rets = rets[999:]
                 rets = rets * 1000
                 results = get_aic(rets)
-                values_df.loc[i, 'AIC_GARCH'] = results[0]
-                values_df.loc[i, 'BIC_GARCH'] = results[1]
-                values_df.loc[i, 'AIC_FIGARCH'] = results[2]
-                values_df.loc[i, 'BIC_FIGARCH'] = results[3]
-                values_df.loc[i, 'AIC_FIGARCH_lower'] = True if results[2] < results[0] else False
-                values_df.loc[i, 'BIC_FIGARCH_lower'] = True if results[3] < results[1] else False
+                values_df.iloc[i, locs['AIC_GARCH']] = results[0]
+                values_df.iloc[i, locs['BIC_GARCH']] = results[1]
+                values_df.iloc[i, locs['AIC_FIGARCH']] = results[2]
+                values_df.iloc[i, locs['BIC_FIGARCH']] = results[3]
+                values_df.iloc[i, locs['AIC_FIGARCH_lower']] = True if results[2] < results[0] else False
+                values_df.iloc[i, locs['BIC_FIGARCH_lower']] = True if results[3] < results[1] else False
 
             for war in wars:
                 if issubclass(war.category, ConvergenceWarning):

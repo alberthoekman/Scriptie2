@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
-#SBATCH --time=12:30:00
+#SBATCH --time=2-12:30:00
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
-#SBATCH --mem=32GB
+#SBATCH --mem=64GB
 #SBATCH --partition=regular
 
 module purge
