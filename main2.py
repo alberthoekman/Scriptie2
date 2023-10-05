@@ -7,6 +7,7 @@ from arch.utility.exceptions import ConvergenceWarning
 import arch
 import pickle
 import os
+import gc
 
 class WarningException(Exception):
     pass
@@ -123,6 +124,10 @@ for combo in combos:
         except WarningException as e:
             continue
 
+        del rets
+        del results
+        gc.collect()
+
     comboname = str(combo[0]) + '/' + str(combo[1])
     sigs = process_sig(values_df, n)
 
@@ -132,5 +137,9 @@ for combo in combos:
     opper.loc[comboname, 'BIC_FIGARCH'] = np.nanmean(values_df['BIC_FIGARCH'])
     opper.loc[comboname, 'AIC_FIGARCH_lower'] = sigs[0]
     opper.loc[comboname, 'BIC_FIGARCH_lower'] = sigs[1]
+
+    del sim
+    del values_df
+    gc.collect()
 
 dump_data(opper, 'aic.p')

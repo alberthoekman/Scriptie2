@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-#SBATCH --time=2-12:30:00
+#SBATCH --time=3-12:30:00
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --mem=64GB

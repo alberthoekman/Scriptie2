@@ -44,7 +44,7 @@ class Simulation:
         # self.dividend_variance = (self.risk_free_rate ** 2) * self.fundamental_variance
 
     def reset(self):
-        self.df = False
+        del self.df
         self.df = self.init_df()
 
     def run(self):
