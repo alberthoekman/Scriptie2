@@ -36,15 +36,15 @@ def get_aic(returns):
 
     return resulta
 
-def process_sig(values_df, n, name):
+def process_sig(values_df, n):
     a = values_df.loc[0:n, 'AIC_FIGARCH_lower'].value_counts(normalize=True)
     b = values_df.loc[0:n, 'BIC_FIGARCH_lower'].value_counts(normalize=True)
 
     a.index = a.index.astype('string')
     b.index = b.index.astype('string')
 
-    values_df.loc[name, 'AIC_FIGARCH_lower'] = a['True'] if 'True' in a else 0.0
-    values_df.loc[name, 'AIC_FIGARCH_lower'] = b['True'] if 'True' in b else 0.0
+    values_df.loc[n, 'AIC_FIGARCH_lower'] = a['True'] if 'True' in a else 0.0
+    values_df.loc[n, 'BIC_FIGARCH_lower'] = b['True'] if 'True' in b else 0.0
 
     return values_df
 
@@ -130,9 +130,8 @@ for i in range(0, n):
     del results
     gc.collect()
 
-comboname = str(combo[0]) + '/' + str(combo[1])
-values_df.loc[comboname] = values_df.mean(numeric_only=True)
-values_df = process_sig(values_df, n, comboname)
+values_df.loc[n] = values_df.mean(numeric_only=True)
+values_df = process_sig(values_df, n)
 
 # opper.loc[comboname, 'AIC_GARCH'] = np.nanmean(values_df['AIC_GARCH'])
 # opper.loc[comboname, 'AIC_FIGARCH'] = np.nanmean(values_df['AIC_FIGARCH'])
