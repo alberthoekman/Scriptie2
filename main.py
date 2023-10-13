@@ -122,18 +122,6 @@ def init_locs():
         "BIC_FIGARCH_lower": 50
     }
 
-def process_sig(values_df, n):
-    a = values_df.loc[0:n, 'AIC_FIGARCH_lower'].value_counts(normalize=True)
-    b = values_df.loc[0:n, 'BIC_FIGARCH_lower'].value_counts(normalize=True)
-
-    a.index = a.index.astype('string')
-    b.index = b.index.astype('string')
-
-    values_df.loc[n, 'AIC_FIGARCH_lower'] = a['True'] if 'True' in a else 0.0
-    values_df.loc[n, 'BIC_FIGARCH_lower'] = b['True'] if 'True' in b else 0.0
-
-    return values_df
-
 if __name__ == '__main__':
     # cwd = os.path.dirname(os.path.realpath(__file__))
     # padda = os.path.join(cwd, "../Scriptie2/data/", "test.p")
