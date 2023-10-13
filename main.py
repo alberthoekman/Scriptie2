@@ -58,6 +58,12 @@ def init_df(ne):
         "min": pd.Series(dtype="float"),
         "max": pd.Series(dtype="float"),
         "skewness": pd.Series(dtype="float"),
+        "AIC_GARCH": pd.Series(dtype='float'),
+        "AIC_FIGARCH": pd.Series(dtype='float'),
+        "BIC_GARCH": pd.Series(dtype='float'),
+        "BIC_FIGARCH": pd.Series(dtype='float'),
+        "AIC_FIGARCH_lower": pd.Series(),
+        "BIC_FIGARCH_lower": pd.Series()
     }, index=range(ne))
 
 
@@ -108,8 +114,25 @@ def init_locs():
         "min": 42,
         "max": 43,
         "skewness": 44,
+        "AIC_GARCH": 45,
+        "AIC_FIGARCH": 46,
+        "BIC_GARCH": 47,
+        "BIC_FIGARCH": 48,
+        "AIC_FIGARCH_lower": 49,
+        "BIC_FIGARCH_lower": 50
     }
 
+def process_sig(values_df, n):
+    a = values_df.loc[0:n, 'AIC_FIGARCH_lower'].value_counts(normalize=True)
+    b = values_df.loc[0:n, 'BIC_FIGARCH_lower'].value_counts(normalize=True)
+
+    a.index = a.index.astype('string')
+    b.index = b.index.astype('string')
+
+    values_df.loc[n, 'AIC_FIGARCH_lower'] = a['True'] if 'True' in a else 0.0
+    values_df.loc[n, 'BIC_FIGARCH_lower'] = b['True'] if 'True' in b else 0.0
+
+    return values_df
 
 if __name__ == '__main__':
     # cwd = os.path.dirname(os.path.realpath(__file__))
@@ -129,8 +152,8 @@ if __name__ == '__main__':
     # pickle.dump(returns, open(autocorr_path1, "wb"))
 
     # exit()
-    sim = Simulation()
-    n = 10
+    sim = Simulation(5, 95)
+    n = 1000
     locs = init_locs()
     returns = np.full((n, 5000), np.nan)
     abs_returns = np.full((n, 5000), np.nan)
@@ -148,28 +171,24 @@ if __name__ == '__main__':
 
         try:
             with warnings.catch_warnings(record=True) as wars:
-                # autocorr1, autocorr2, autocorr3, values = an.single_post_process(sim.df, i, values_df, locs)
-                rets = np.asarray(sim.df['return'])
-                rets = rets[999:]
-                rets = rets * 1000
-                an.dump_data(rets, 'data11/rets/rets' + str(i) + '.p')
+                autocorr1, autocorr2, autocorr3, values = an.single_post_process(sim.df, i, values_df, locs)
 
             for war in wars:
                 if issubclass(war.category, ConvergenceWarning):
                     raise WarningException("moi")
         except WarningException as e:
             continue
-        # returns[i, :] = autocorr1
-        # abs_returns[i, :] = autocorr2
-        # sq_returns[i, :] = autocorr3
-        # values_df = values
+        returns[i, :] = autocorr1
+        abs_returns[i, :] = autocorr2
+        sq_returns[i, :] = autocorr3
+        values_df = values
 
-    # values_df.loc[n] = values_df.mean(numeric_only=True)
-    # values_df = an.process_sig(values_df, n)
-    # an.dump_data(returns, 'returns.p')
-    # an.dump_data(abs_returns, 'abs_returns.p')
-    # an.dump_data(sq_returns, 'sq_returns.p')
-    # an.dump_data(np.nanmean(returns, axis=0), 'autocorr1.p')
-    # an.dump_data(np.nanmean(abs_returns, axis=0), 'autocorr2.p')
-    # an.dump_data(np.nanmean(sq_returns, axis=0), 'autocorr3.p')
-    # an.dump_data(values_df, 'values.p')
+    values_df.loc[n] = values_df.mean(numeric_only=True)
+    values_df = an.process_sig(values_df, n)
+    an.dump_data(returns, 'returns.p')
+    an.dump_data(abs_returns, 'abs_returns.p')
+    an.dump_data(sq_returns, 'sq_returns.p')
+    an.dump_data(np.nanmean(returns, axis=0), 'autocorr1.p')
+    an.dump_data(np.nanmean(abs_returns, axis=0), 'autocorr2.p')
+    an.dump_data(np.nanmean(sq_returns, axis=0), 'autocorr3.p')
+    an.dump_data(values_df, 'values.p')

@@ -62,6 +62,8 @@ def get_figarch(returns, n, values, locs):
     values.iloc[n, locs['garch_alpha_0_sig']] = res.pvalues['omega'] <= 0.05
     values.iloc[n, locs['garch_alpha_1_sig']] = res.pvalues['alpha[1]'] <= 0.05
     values.iloc[n, locs['garch_beta_sig']] = res.pvalues['beta[1]'] <= 0.05
+    values.iloc[i, locs['AIC_GARCH']] = garch_aic = res.aic
+    values.iloc[i, locs['BIC_GARCH']] = garch_bic = res.bic
 
     model.volatility = arch.univariate.volatility.FIGARCH(p=1, q=1)
     res = model.fit(disp=False)
@@ -86,6 +88,10 @@ def get_figarch(returns, n, values, locs):
     values.iloc[n, locs['fi_phi_sig']] = res.pvalues['phi'] <= 0.05
     values.iloc[n, locs['fi_d_sig']] = res.pvalues['d'] <= 0.05
     values.iloc[n, locs['fi_beta_sig']] = res.pvalues['beta'] <= 0.05
+    values.iloc[n, locs['AIC_FIGARCH']] = res.aic
+    values.iloc[n, locs['BIC_FIGARCH']] = res.bic
+    values.iloc[n, locs['AIC_FIGARCH_lower']] = True if res.aic < garch_aic else False
+    values.iloc[n, locs['BIC_FIGARCH_lower']] = True if res.bic < garch_bic else False
 
     return values
 
@@ -188,11 +194,20 @@ def process_sig(values_df, n):
     values_df['fi_d_sig'].at[n] = j['True'] if 'True' in j else 0.0
     values_df['fi_beta_sig'].at[n] = k['True'] if 'True' in k else 0.0
 
+    l = values_df.loc[0:n, 'AIC_FIGARCH_lower'].value_counts(normalize=True)
+    m = values_df.loc[0:n, 'BIC_FIGARCH_lower'].value_counts(normalize=True)
+
+    l.index = l.index.astype('string')
+    m.index = m.index.astype('string')
+
+    values_df.loc[n, 'AIC_FIGARCH_lower'] = l['True'] if 'True' in l else 0.0
+    values_df.loc[n, 'BIC_FIGARCH_lower'] = m['True'] if 'True' in m else 0.0
+
     return values_df
 
 def dump_data(data, name):
     cwd = os.path.dirname(os.path.realpath(__file__))
-    padda = os.path.join(cwd, "data", name)
+    padda = os.path.join(cwd, "data95", name)
     padda = os.path.abspath(padda)
     pickle.dump(data, open(padda, "wb"))
 
