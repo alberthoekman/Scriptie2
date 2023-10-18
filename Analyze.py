@@ -62,8 +62,8 @@ def get_figarch(returns, n, values, locs):
     values.iloc[n, locs['garch_alpha_0_sig']] = res.pvalues['omega'] <= 0.05
     values.iloc[n, locs['garch_alpha_1_sig']] = res.pvalues['alpha[1]'] <= 0.05
     values.iloc[n, locs['garch_beta_sig']] = res.pvalues['beta[1]'] <= 0.05
-    values.iloc[i, locs['AIC_GARCH']] = garch_aic = res.aic
-    values.iloc[i, locs['BIC_GARCH']] = garch_bic = res.bic
+    values.iloc[n, locs['AIC_GARCH']] = garch_aic = res.aic
+    values.iloc[n, locs['BIC_GARCH']] = garch_bic = res.bic
 
     model.volatility = arch.univariate.volatility.FIGARCH(p=1, q=1)
     res = model.fit(disp=False)
