@@ -4,7 +4,7 @@ from Market import Market
 from numpy.random import default_rng
 import numpy as np
 import pandas as pd
-
+import matplotlib.pyplot as plt
 
 class Simulation:
     def __init__(self, funds, charts):
@@ -83,6 +83,16 @@ class Simulation:
                 self.df.iloc[t+1, self.locs["fundamental"]] = fundamental
                 self.df.iloc[t+1, self.locs["mean"]] = sample_mean
                 self.df.iloc[t+1, self.locs["var"]] = sample_var
+
+        plt.figure(figsize=(10, 5))
+        plt.plot(self.df.loc[5000:, 'price'])
+        plt.title('Price')
+        plt.xlabel('t')
+        plt.ylabel('Price')
+        plt.grid(True)
+
+        plt.show()
+        pass
 
     def populate_agents(self):
         if self.n_fundamentalists > 0:

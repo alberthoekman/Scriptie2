@@ -5,6 +5,7 @@ import pandas as pd
 import numpy as np
 import Analyze as an
 from arch.utility.exceptions import ConvergenceWarning
+import sys
 
 class WarningException(Exception):
     pass
@@ -123,24 +124,25 @@ def init_locs():
     }
 
 if __name__ == '__main__':
-    # cwd = os.path.dirname(os.path.realpath(__file__))
-    # padda = os.path.join(cwd, "../Scriptie2/data/", "test.p")
-    # padda = os.path.abspath(padda)
-    #
-    # ret = pickle.load(open(padda, 'rb'))
-    # fit = get_figarch(ret, 0, [], [])
-    # pass
-    # sim = Simulation()
-    # sim.run()
-    # returns = np.asarray(sim.df['return'])
-    # returns = returns[999:]
-    # cwd = os.path.dirname(os.path.realpath(__file__))
-    # autocorr_path1 = os.path.join(cwd, "data", "test.p")
-    # autocorr_path1 = os.path.abspath(autocorr_path1)
-    # pickle.dump(returns, open(autocorr_path1, "wb"))
+    combos = [
+        (5, 5),
+        (4, 6),
+        (3, 7),
+        (2, 8),
+        (1, 9),
+        (6, 4),
+        (7, 3),
+        (8, 2),
+        (9, 1),
+        (10, 0),
+        (0, 10),
+        (5, 95)
+    ]
 
-    # exit()
-    sim = Simulation(5, 95)
+    numero = sys.argv[1]
+    combo = combos[int(numero)-1]
+    sim = Simulation(combo[0], combo[1])
+
     n = 1000
     locs = init_locs()
     returns = np.full((n, 5000), np.nan)
@@ -173,10 +175,10 @@ if __name__ == '__main__':
 
     values_df.loc[n] = values_df.mean(numeric_only=True)
     values_df = an.process_sig(values_df, n)
-    an.dump_data(returns, 'returns.p')
-    an.dump_data(abs_returns, 'abs_returns.p')
-    an.dump_data(sq_returns, 'sq_returns.p')
-    an.dump_data(np.nanmean(returns, axis=0), 'autocorr1.p')
-    an.dump_data(np.nanmean(abs_returns, axis=0), 'autocorr2.p')
-    an.dump_data(np.nanmean(sq_returns, axis=0), 'autocorr3.p')
-    an.dump_data(values_df, 'values.p')
+    an.dump_data(returns, numero, 'returns.p')
+    an.dump_data(abs_returns, numero, 'abs_returns.p')
+    an.dump_data(sq_returns, numero, 'sq_returns.p')
+    an.dump_data(np.nanmean(returns, axis=0), numero, 'autocorr1.p')
+    an.dump_data(np.nanmean(abs_returns, axis=0), numero, 'autocorr2.p')
+    an.dump_data(np.nanmean(sq_returns, axis=0), numero, 'autocorr3.p')
+    an.dump_data(values_df, numero, 'values.p')

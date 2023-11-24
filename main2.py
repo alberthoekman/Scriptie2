@@ -68,32 +68,20 @@ def init_locs():
         "BIC_FIGARCH_lower": 5
     }
 
-# combos = [
-#     (5, 5),
-#     (4, 6),
-#     (3, 7),
-#     (2, 8),
-#     (1, 9),
-#     (6, 4),
-#     (7, 3),
-#     (8, 2),
-#     (9, 1),
-#     (10, 0),
-#     (0, 10)
-# ]
-
 combos = [
+    (5, 5),
+    (4, 6),
+    (3, 7),
+    (2, 8),
+    (1, 9),
+    (6, 4),
+    (7, 3),
+    (8, 2),
+    (9, 1),
+    (10, 0),
+    (0, 10),
     (95, 5)
 ]
-
-# opper = pd.DataFrame({
-#     "AIC_GARCH": pd.Series(dtype='float'),
-#     "AIC_FIGARCH": pd.Series(dtype='float'),
-#     "BIC_GARCH": pd.Series(dtype='float'),
-#     "BIC_FIGARCH": pd.Series(dtype='float'),
-#     "AIC_FIGARCH_lower": pd.Series(),
-#     "BIC_FIGARCH_lower": pd.Series()
-# }, index=['5/5', '4/6', '3/7', '2/8', '1/9', '6/4', '7/3', '8/2', '9/1', '10/0', '0/10'])
 
 locs = init_locs()
 

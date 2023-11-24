@@ -7,6 +7,7 @@ import pickle
 
 
 def get_ac_plaw(y):
+    y = np.asarray(y)
     x = np.arange(1, len(y) + 1)
     logx = np.log(x)
     logy = np.log(y+1)
@@ -17,21 +18,14 @@ def get_ac_plaw(y):
 
 
 def get_autocorr(returns):
-    std = np.std(returns)
+    returns = pd.Series(returns)
     sq_returns = returns ** 2
     abs_returns = abs(returns)
+    lags = np.arange(1, len(returns))
 
-    autocorr1 = np.correlate(returns, returns, mode='full')
-    autocorr1 = autocorr1 / (len(returns) * (std ** 2))
-    autocorr1 = autocorr1[len(autocorr1) // 2 + 1:]
-
-    autocorr2 = np.correlate(abs_returns, abs_returns, mode='full')
-    autocorr2 = autocorr2 / (len(abs_returns) * (np.std(abs_returns) ** 2))
-    autocorr2 = autocorr2[len(autocorr2) // 2 + 1:]
-
-    autocorr3 = np.correlate(sq_returns, sq_returns, mode='full')
-    autocorr3 = autocorr3 / (len(sq_returns) * (np.std(sq_returns) ** 2))
-    autocorr3 = autocorr3[len(autocorr3) // 2 + 1:]
+    autocorr1 = [returns.corr(returns.shift(lag)) for lag in lags]
+    autocorr2 = [abs_returns.corr(abs_returns.shift(lag)) for lag in lags]
+    autocorr3 = [sq_returns.corr(sq_returns.shift(lag)) for lag in lags]
 
     abs_power = get_ac_plaw(autocorr2)
     sq_power = get_ac_plaw(autocorr3)
@@ -205,9 +199,10 @@ def process_sig(values_df, n):
 
     return values_df
 
-def dump_data(data, name):
+def dump_data(data, path, name):
+    path = 'data' + str(path)
     cwd = os.path.dirname(os.path.realpath(__file__))
-    padda = os.path.join(cwd, "data95", name)
+    padda = os.path.join(cwd, path, name)
     padda = os.path.abspath(padda)
     pickle.dump(data, open(padda, "wb"))
 

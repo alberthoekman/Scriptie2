@@ -5,9 +5,10 @@
 #SBATCH --ntasks=1
 #SBATCH --mem=32GB
 #SBATCH --partition=regular
+#SBATCH --array=1-12
 
 module purge
 module load OpenBLAS/0.3.18-GCC-11.2.0
 
 source /home4/s3537307/venv/bin/activate
-pypy /home4/s3537307/Scriptie2/main.py
+pypy /home4/s3537307/Scriptie2/main.py ${SLURM_ARRAY_TASK_ID}
